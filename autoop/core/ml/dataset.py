@@ -13,9 +13,9 @@ class Dataset(Artifact):
         _asset_path: A string with the path for the respective asset.
         _version: A string with the proper version of the asset.
         _data: The bytes of an encryped dataset.
-        _metadata: ##############I dont know what to write here
+        _metadata: A string with additional data.
         _type: The type of the artifact(dataset, diagram, etc.)
-        _tags: ##############I dont know what to write here.
+        _tags: A string that helps with the categorisation of artifacts.
     """
     def __init__(self, *args: any, **kwargs: any) -> None:
         """
