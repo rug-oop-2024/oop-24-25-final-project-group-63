@@ -2,6 +2,8 @@ import base64
 from typing import Dict, List, Optional
 from pydantic import BaseModel
 from copy import deepcopy
+import io
+import pandas as pd
 
 
 class Artifact(BaseModel):
@@ -106,6 +108,14 @@ class Artifact(BaseModel):
         This method transforms the data from bytes to csv data.
         """
         return self._data
+
+    def to_dataframe(self) -> pd.DataFrame:
+        """
+        This method transforms an artifact into a dataframe.
+        """
+        bytes = self.read()
+        csv = bytes.decode()
+        return pd.read_csv(io.StringIO(csv))
 
     def _repr_(self) -> str:
         """

@@ -24,7 +24,7 @@ class Feature(BaseModel):
         """
         A custom string representation of this class.
         """
-        return f"The column name is '{self._name}' and has {self._type} data."
+        return f"'{self._name}' has {self._type} data."
 
     @property
     def name(self) -> str:
