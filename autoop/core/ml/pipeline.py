@@ -3,10 +3,11 @@ import pickle
 
 from autoop.core.ml.artifact import Artifact
 from autoop.core.ml.dataset import Dataset
-from autoop.core.ml.model import Model
+from autoop.core.ml.model import Model, REGRESSION_MODELS
 from autoop.core.ml.feature import Feature
 from autoop.core.ml.metric import Metric
 from autoop.functional.preprocessing import preprocess_features
+from autoop.core.ml.model import CLASSIFICATION_MODELS
 import numpy as np
 
 
@@ -26,11 +27,11 @@ class Pipeline():
         self._metrics = metrics
         self._artifacts = {}
         self._split = split
-        if target_feature.type == "categorical":
-            if model.type != "classification":
-                raise ValueError("Model type must be classification" +
-                                 " for categorical target feature")
-        if target_feature.type == "continuous" and model.type != "regression":
+        #if target_feature.type == "categorical":
+        #    raise ValueError("Model type must be classification" +
+        #                     " for categorical target feature")
+        # and model.__class__.__name__ not in CLASSIFICATION_MODELS
+        if target_feature.type == "continuous" and model.__class__.__name__ not in REGRESSION_MODELS:
             raise ValueError("Model type must be regression" +
                              " for continuous target feature")
 

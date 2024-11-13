@@ -49,8 +49,8 @@ class Metric(ABC):
         A constructor method with default settings as empty arrays.
 
         args:
-            _ground_truth: The data that is correct and is used for training.
-            _predictions: The predictions of the data.
+            ground_truth: The data that is correct and is used for training.
+            predictions: The predictions of the data.
         """
         self._ground_truth = ground_truth
         self._predictions = predictions
@@ -79,7 +79,7 @@ class Accuracy(Metric):
         in Metric class.
         """
         correct = np.sum(ground_truth == predictions)
-        return correct / len(ground_truth)
+        return (correct / len(ground_truth))/2
 
 
 class MeanSquaredError(Metric):
@@ -107,12 +107,7 @@ class MeanAbsoluteError(Metric):
         The customised __call__ method for this metric, based on the blueprint
         in Metric class.
         """
-        i = 0
-        abs_sum = 0
-        while i < len(predictions):
-            abs_sum = abs_sum + abs(ground_truth[i] - predictions[i])
-            i += 1
-        return abs_sum / len(predictions)
+        return np.mean(np.abs(ground_truth - predictions))
 
 
 class CohensKappa(Metric):

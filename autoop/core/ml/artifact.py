@@ -12,13 +12,13 @@ class Artifact(BaseModel):
     asset which is stored and includes information about this specific asset.
 
     args:
-        _name: A string with the name of the asset.
-        _asset_path: A string with the path for the respective asset.
-        _version: A string with the proper version of the asset.
-        _data: The bytes of an encryped dataset.
-        _metadata: A string with additional data.
-        _type: The type of the artifact(dataset, diagram, etc.)
-        _tags: A string that helps with the categorisation or artifacts.
+        name: A string with the name of the asset.
+        asset_path: A string with the path for the respective asset.
+        version: A string with the proper version of the asset.
+        data: The bytes of an encryped dataset.
+        metadata: A string with additional data.
+        type: The type of the artifact(dataset, diagram, etc.)
+        tags: A string that helps with the categorisation or artifacts.
     """
     def __init__(
         self,
