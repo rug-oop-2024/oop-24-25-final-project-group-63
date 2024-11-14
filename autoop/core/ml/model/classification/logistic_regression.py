@@ -20,7 +20,7 @@ class LogisticRegressionModel(Model):
         ground_truth = np.argmax(ground_truth, axis=1)
         model = LogisticRegression()
         model.fit(observations, ground_truth)
-        self._parameters = {"model": model}
+        self._parameters["model"] = model
 
     def predict(self, observations: np.array) -> np.array:
         """

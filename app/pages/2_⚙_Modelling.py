@@ -66,15 +66,19 @@ if x:
     elif target_feature.type == "numerical":
         selected_model = st.radio("Pick one model:", REGRESSION_MODELS)
 
-    input_features = [feature for feature in c if feature.name in selected_features]
+    input_features = [feature for feature in c
+                      if feature.name in selected_features]
 
     model = get_model(selected_model)
 
-    selected_metric = st.selectbox("Choose a metric for model evaluation:", METRICS)
+    selected_metric = st.selectbox("Choose a metric for model evaluation:",
+                                   METRICS)
     metric = get_metric(selected_metric)
 
     st.subheader("Split Dataset")
-    split_ratio = st.slider("Training set ratio (remaining goes to validation):", min_value=0.1, max_value=0.9, value=0.8)
+    split_ratio = st.slider(
+        "Training set ratio (remaining goes to validation):",
+        min_value=0.1, max_value=0.9, value=0.8)
 
     st.subheader("Pipeline Summary")
     st.write(f"**Dataset**: {dataset.name}")
@@ -82,7 +86,8 @@ if x:
     st.write(f"**Input Features**: {', '.join(selected_features)}")
     st.write(f"**Target Feature**: {target_feature.name}")
     st.write(f"**Metric**: {selected_metric}")
-    st.write(f"**Training Split**: {split_ratio * 100:.0f}% Training, {100 - split_ratio * 100:.0f}% Validation")
+    st.write(
+        f"**Training Split**: {split_ratio * 100:.0f}% Training, {100 - split_ratio * 100:.0f}% Validation")
 
     if st.button("Train Model"):
         pipeline = Pipeline(

@@ -1,26 +1,9 @@
 import numpy as np
-from collections import Counter
 from autoop.core.ml.model import Model
-from pydantic import field_validator
+from sklearn.neighbors import KNeighborsClassifier
 
 
 class KNearestNeighbors(Model):
-    def __init__(self, k: int = 3) -> None:
-        """Constructor function that sets the value for k and inheits from
-        Model."""
-        super().__init__()
-        self._k = k
-
-    @field_validator("k")
-    def k_greater_than_zero(cls, value: int) -> None:
-        """
-        This method checks if the attribute k is higher than 0.
-        """
-        if value <= 0:
-            raise ValueError("k must be greater than 0.")
-        if value != int(value):
-            raise ValueError("k must be an integer.")
-
     def fit(self, observations: np.array, ground_truth: np.array) -> None:
         """
         This method trains the model on the given data and checks it
@@ -34,10 +17,9 @@ class KNearestNeighbors(Model):
         Return:
             It does not return anything. It just trains on the data.
         """
-        self._parameters = {
-            "observations": observations,
-            "ground_truth": ground_truth
-            }
+        model = KNeighborsClassifier()
+        model.fit(observations, ground_truth)
+        self._parameters["model"] = model
 
     def predict(self, observations: np.array) -> np.array:
         """
@@ -59,25 +41,4 @@ class KNearestNeighbors(Model):
                 "Model not fitted. Call fit with appropriate"
                 "arguments before using predict"
             )
-
-        predictions = [self._predict_single(x) for x in observations]
-        self._parameters["predictions"] = predictions
-        return np.array(predictions)
-
-    def _predict_single(self, observations: np.array) -> list:
-        """
-        This method calculates the Euclidean distance between the given data
-        and all the previous stored data.
-
-        Args:
-            observations: piece of data from the data set.
-        """
-        distances = np.linalg.norm(
-            observations - self._parameters["observations"], axis=1
-        )
-        sorted_indices = np.argsort(distances)
-        k_indices = sorted_indices[: self._k]
-        k_nearest_labels = [self._parameters["ground_truth"][i]
-                            for i in k_indices]
-        most_common = Counter(k_nearest_labels).most_common(1)
-        return most_common[0][0]
+        return self._parameters["model"].predict(observations)
