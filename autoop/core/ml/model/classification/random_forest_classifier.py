@@ -11,7 +11,7 @@ class RandomForestClassifierModel(Model):
     args:
         _parameters: * definition given in Model class *
     """
-    def train(self, observations: np.array, ground_truth: np.array) -> None:
+    def fit(self, observations: np.array, ground_truth: np.array) -> None:
         """
         Based on the blueprint of the Model class, this method takes as
         parameters the observations and the ground truth of a dataset and
