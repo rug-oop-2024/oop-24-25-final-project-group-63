@@ -29,9 +29,11 @@ else:
         st.write(f"**Pipeline Name:** {selec_pipeline.name}")
         st.write(f"**Pipeline Version:** {selec_pipeline.version}")
         st.write(f"**Model Type:** {pipeline_data['model']}")
-        st.write("**Input Features:**", ", ".join([feat.name for feat in pipeline_data['input_features']]))
+        st.write("**Input Features:**", ", ".join(
+            [feat.name for feat in pipeline_data['input_features']]))
         st.write("**Target Feature:**", pipeline_data['target_feature'].name)
-        st.write("**Metrics:**", [str(metric) for metric in pipeline_data['metrics']])
+        st.write("**Metrics:**", [str(metric)
+                                  for metric in pipeline_data['metrics']])
 
         if st.button("Delete Pipeline"):
             automl.registry.delete(selec_pipeline.id)
@@ -39,7 +41,8 @@ else:
             st.rerun()
 
         st.write("## Predict with Pipeline")
-        uploaded_file = st.file_uploader("Upload a CSV file for prediction", type=["csv"])
+        uploaded_file = st.file_uploader("Upload a CSV file for prediction",
+                                         type=["csv"])
 
         if uploaded_file:
             data = pd.read_csv(uploaded_file)

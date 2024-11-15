@@ -27,9 +27,11 @@ class MultipleLinearRegression(Model):
         """
         observations = np.append(observations, np.ones((len(observations), 1)),
                                  axis=1)
+
         observations_transpose = observations.T
-        inverse = np.linalg.inv(observations_transpose @ observations)
-        slopes = inverse @ observations_transpose @ ground_truth
+        pseudoinverse = np.linalg.pinv(observations_transpose @ observations)
+        slopes = pseudoinverse @ observations_transpose @ ground_truth
+
         self._parameters = {'slopes': slopes}
 
     def predict(self, observations: np.array) -> np.array:

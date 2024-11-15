@@ -4,7 +4,8 @@ from sklearn.neighbors import KNeighborsClassifier
 
 
 class KNearestNeighbors(Model):
-    def fit(self, observations: np.array, ground_truth: np.array) -> None:
+    def fit(self, observations: np.array,
+            ground_truth: np.array) -> None | ValueError:
         """
         This method trains the model on the given data and checks it
         with the correct answer. This just adds the values into the
@@ -17,6 +18,11 @@ class KNearestNeighbors(Model):
         Return:
             It does not return anything. It just trains on the data.
         """
+        if len(observations) < 5:
+            raise ValueError("There is not enough data to clasify properly." +
+                             " Please add a bigger dataset or change" +
+                             " the scale of observations to more. It" +
+                             " needs at least 5 rows!")
         model = KNeighborsClassifier()
         model.fit(observations, ground_truth)
         self._parameters["model"] = model

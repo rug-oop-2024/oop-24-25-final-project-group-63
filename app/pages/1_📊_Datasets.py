@@ -39,14 +39,22 @@ if datasets:
     for dataset in datasets:
         with st.expander(f"{dataset.name} (Version: {dataset.version})"):
             st.write(f"*Asset Path:* {dataset.asset_path}")
-            st.write(f"*Tags:* {', '.join(dataset.tags) if dataset.tags else 'None'}")
-            st.write(f"*Metadata:* {dataset.metadata if dataset.metadata else 'None'}")
+            if dataset.tags:
+                st.write(f"*Tags:* {', '.join(dataset.tags)}")
+            else:
+                st.write(f"*Tags:* {None}")
+
+            if dataset.metadata:
+                st.write(f"*Tags:* {', '.join(dataset.metadata)}")
+            else:
+                st.write(f"*Tags:* {None}")
 
             if st.button(f"View {dataset.name}", key=f"view-{dataset.name}"):
                 df = dataset.read()
                 st.write(df)
 
-            if st.button(f"Delete {dataset.name}", key=f"delete-{dataset.name}"):
+            if st.button(f"Delete {dataset.name}",
+                         key=f"delete-{dataset.name}"):
                 automl.registry.delete(dataset.id)
                 st.success(f"Dataset '{dataset.name}' deleted successfully.")
                 st.rerun()
