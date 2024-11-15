@@ -14,6 +14,10 @@ uploaded_file = st.file_uploader("Choose a CSV file", type=["csv"])
 
 if st.button("Upload Dataset"):
     if uploaded_file is not None and dataset_name:
+        diff_version = next(
+            (d for d in datasets if d.name == dataset_name), None)
+        if diff_version:  # to make sure there's only the latest version
+            automl.registry.delete(diff_version.id)
         data = pd.read_csv(uploaded_file)
         dataset = Dataset.from_dataframe(
             data=data,
