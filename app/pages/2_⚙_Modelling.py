@@ -32,32 +32,32 @@ write_helper_text("Please choose the dataset you want to use" +
 
 list_of_artifacts = automl.registry.list()
 datasets = automl.registry.list(type="dataset")
-x = st.selectbox("Datasets:", [dataset.name for dataset in datasets])
+dataset = st.selectbox("Datasets:", [dataset.name for dataset in datasets])
 for element in list_of_artifacts:
-    if element.name == x:
-        x = element
+    if element.name == dataset:
+        dataset = element
         break
-if x:
-    df = x.to_dataframe()
+if dataset:
+    df = dataset.to_dataframe()
     dataset = Dataset.from_dataframe(
-                name=x.name,
-                asset_path=x.asset_path,
+                name=dataset.name,
+                asset_path=dataset.asset_path,
                 data=df,
             )
 
-    c = detect_feature_types(dataset)
+    det_feat = detect_feature_types(dataset)
 
     selected_features = st.multiselect("Select input features:", df.columns)
 
     rest_of_features = []
 
-    for element in c:
+    for element in det_feat:
         if element.name not in selected_features:
             rest_of_features.append(element.name)
 
     target_feature = st.radio("Pick the targeted feature:", rest_of_features)
     if target_feature:
-        for feature in c:
+        for feature in det_feat:
             if feature.name == target_feature:
                 target_feature = feature
                 st.write(str(feature))
@@ -69,7 +69,7 @@ if x:
             selected_model = st.radio("Pick one model:", REGRESSION_MODELS)
             metric_type = REGRESSION_METRICS
 
-        input_features = [feature for feature in c
+        input_features = [feature for feature in det_feat
                           if feature.name in selected_features]
 
         model = get_model(selected_model)
