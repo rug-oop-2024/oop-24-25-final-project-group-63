@@ -3,7 +3,7 @@ from ..classification.logistic_regression import LogisticRegressionModel
 from ..classification.random_forest_classifier import RandomForestClassifierModel
 
 CLASSIFICATION_MODELS = {
-    "k_nearest_neighbors": KNearestNeighbors(),
-    "logistic_regression": LogisticRegressionModel(),
-    "random_forest_classifier": RandomForestClassifierModel()
+    "k nearest neighbors": KNearestNeighbors(),
+    "logistic regression": LogisticRegressionModel(),
+    "random forest classifier": RandomForestClassifierModel()
 }

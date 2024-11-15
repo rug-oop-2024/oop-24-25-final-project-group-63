@@ -17,7 +17,7 @@ class LogisticRegressionModel(Model):
         parameters the observations and the ground truth of a dataset and
         trains based on them.
         """
-        model = LogisticRegression()
+        model = LogisticRegression(solver='liblinear', random_state=0)
         model.fit(observations, ground_truth)
         self._parameters["model"] = model
 
