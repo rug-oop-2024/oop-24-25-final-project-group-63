@@ -1,9 +1,9 @@
 from autoop.core.ml.model import Model
-from sklearn.linear_model import Lasso as Las
+from sklearn.ensemble import GradientBoostingRegressor
 import numpy as np
 
 
-class Lasso(Model):
+class GradientBoostModel(Model):
     """
     A class in which a multiple linear regression model is implemented.
     Different from the previous one, this model is using methods from
@@ -21,14 +21,14 @@ class Lasso(Model):
 
         Args:
             observations: the data that is "fed" to the model.
-            ground_truth: the right outcome of the observations.
+            ground_truth: the correct outcome of the observations.
 
         Return:
             It does not return anything. It just trains the data.
         """
-        lasso = Las()
-        lasso.fit(observations, ground_truth)
-        self._parameters = {"Fitted model": lasso}
+        model = GradientBoostingRegressor()
+        model.fit(observations, ground_truth)
+        self._parameters["model"] = model
 
     def predict(self, observations: np.array) -> np.array:
         """
@@ -49,6 +49,4 @@ class Lasso(Model):
         if self._parameters is None:
             raise ValueError("Model not fitted. Call 'fit' with appropriate"
                              "arguments before using predict")
-
-        y_hat = self._parameters["Fitted model"].predict(observations)
-        return y_hat
+        return self._parameters["model"].predict(observations)

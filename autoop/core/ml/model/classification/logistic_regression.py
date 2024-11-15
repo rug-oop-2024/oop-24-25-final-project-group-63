@@ -17,7 +17,6 @@ class LogisticRegressionModel(Model):
         parameters the observations and the ground truth of a dataset and
         trains based on them.
         """
-        ground_truth = np.argmax(ground_truth, axis=1)
         model = LogisticRegression()
         model.fit(observations, ground_truth)
         self._parameters["model"] = model

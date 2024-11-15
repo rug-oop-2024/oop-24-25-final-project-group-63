@@ -17,7 +17,7 @@ class SVRModel(Model):
         It takes as parameters the observations and the ground truth of the
         dataset. It fits the data and prepares it for the prediction method.
         """
-        model = SVR()
+        model = SVR(kernel="rbf")
         self._parameters = {"model": model.fit(observtions, ground_truth)}
 
     def predict(self, observtions: np.array) -> np.array:

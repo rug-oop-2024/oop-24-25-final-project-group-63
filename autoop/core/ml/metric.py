@@ -3,14 +3,17 @@ from typing import Callable
 import numpy as np
 
 
-METRICS = {
-    "mean_squared_error",
-    "mean_absolute_error",
+CLASSIFICATION_METRICS = [
     "accuracy",
     "cohens_kappa",
     "macro_average",
+]
+
+REGRESSION_METRICS = [
+    "mean_squared_error",
+    "mean_absolute_error",
     "R_squared"
-}
+]
 
 
 def get_metric(name: str) -> Callable:
@@ -43,8 +46,8 @@ class Metric(ABC):
     """
     Base class for all metrics. It inherits from ABC class.
     """
-    def __init__(self, ground_truth: np.array = np.array([]),
-                 predictions: np.array = np.array([])) -> None:
+    def __init__(self, predictions: np.array = np.array([]),
+                 ground_truth: np.array = np.array([])) -> None:
         """
         A constructor method with default settings as empty arrays.
 
@@ -52,15 +55,16 @@ class Metric(ABC):
             ground_truth: The data that is correct and is used for training.
             predictions: The predictions of the data.
         """
+        super().__init__()
         self._ground_truth = ground_truth
         self._predictions = predictions
 
     @abstractmethod
-    def __call__(self, ground_truth: np.array,
-                 predictions: np.array) -> None:
+    def __call__(self, predictions: np.array,
+                 ground_truth: np.array) -> None:
         pass
 
-    def evaluate(self, ground_truth: np.array, predictions: np.array) -> float:
+    def evaluate(self, predictions: np.array, ground_truth: np.array) -> float:
         """
         Evaluates the metric using the __call__ method for consistency.
         """
@@ -72,14 +76,22 @@ class Accuracy(Metric):
     A classification metric that returns the accuracy of the model based on
     the predictions and on the ground truth.
     """
-    def __call__(self, ground_truth: np.array,
-                 predictions: np.array) -> float:
+    def __call__(self, predictions: np.array,
+                 ground_truth: np.array) -> float:
         """
         The customised __call__ method for this metric, based on the blueprint
         in Metric class.
         """
+        # correct = 0
+        # for element1, element2 in zip(ground_truth, predictions):
+        #     ok = 1
+        #     for element3, element4 in zip(element1, element2):
+        #         if element3 != element4 and ok == 1:
+        #             ok = 0
+        #     if ok == 1:
+        #         correct += 1
         correct = np.sum(ground_truth == predictions)
-        return (correct / len(ground_truth))/2
+        return correct / len(ground_truth)
 
 
 class MeanSquaredError(Metric):
@@ -87,8 +99,8 @@ class MeanSquaredError(Metric):
     A regression metric that returns the mean squared error of the model,
     based on the predictions and on the ground truth.
     """
-    def __call__(self, ground_truth: np.array,
-                 predictions: np.array) -> float:
+    def __call__(self, predictions: np.array,
+                 ground_truth: np.array) -> float:
         """
         The customised __call__ method for this metric, based on the blueprint
         in Metric class.
@@ -101,8 +113,8 @@ class MeanAbsoluteError(Metric):
     A regression metric that returns the mean absolute error of the model,
     based on the predictions and on the ground truth.
     """
-    def __call__(self, ground_truth: np.array,
-                 predictions: np.array) -> float:
+    def __call__(self, predictions: np.array,
+                 ground_truth: np.array) -> float:
         """
         The customised __call__ method for this metric, based on the blueprint
         in Metric class.
@@ -115,40 +127,32 @@ class CohensKappa(Metric):
     A classification metric that returns the Cohen's Kappa value of the model,
     based on the predictions and on the ground truth.
     """
-    def __call__(self, ground_truth: np.array, predictions: np.array) -> float:
+    def __call__(self, predictions: np.array, ground_truth: np.array) -> float:
         """
         The customised __call__ method for this metric, based on the blueprint
         in Metric class.
         """
-        if len(ground_truth) != len(predictions):
-            raise ValueError("ground_truth and predictions must" +
-                             " be the same length.")
+        predictions = predictions.flatten()
+        ground_truth = ground_truth.flatten()
 
-        unique_labels = np.unique(np.concatenate((ground_truth, predictions)))
-        label_to_index = {label: idx for idx,
-                          label in enumerate(unique_labels)}
+        if len(predictions) != len(ground_truth):
+            raise ValueError("Predictions and ground truth must have the same length.")
 
-        encoded_ground_truth = np.array([label_to_index[label]
-                                         for label in ground_truth])
+        classes = np.unique(np.concatenate([predictions, ground_truth]))
+        num_classes = len(classes)
 
-        encoded_predictions = np.array([label_to_index[label]
-                                        for label in predictions])
-
-        num_classes = len(unique_labels)
         confusion_matrix = np.zeros((num_classes, num_classes), dtype=int)
-
-        for i in range(len(encoded_ground_truth)):
-            confusion_matrix[encoded_ground_truth[i],
-                             encoded_predictions[i]] += 1
+        for i in range(len(ground_truth)):
+            true_idx = np.where(classes == ground_truth[i])[0][0]
+            pred_idx = np.where(classes == predictions[i])[0][0]
+            confusion_matrix[true_idx, pred_idx] += 1
 
         p_o = np.trace(confusion_matrix) / np.sum(confusion_matrix)
 
-        total_per_class = np.sum(confusion_matrix, axis=1)
-        predicted_per_class = np.sum(confusion_matrix, axis=0)
-
-        numerator = np.sum(total_per_class * predicted_per_class)
-        denominator = np.sum(confusion_matrix) ** 2
-        p_e = numerator / denominator
+        row_sums = np.sum(confusion_matrix, axis=1)
+        col_sums = np.sum(confusion_matrix, axis=0)
+        total = np.sum(confusion_matrix)
+        p_e = np.sum((row_sums * col_sums) / total**2)
 
         kappa = (p_o - p_e) / (1 - p_e) if (1 - p_e) != 0 else 1.0
         return kappa
@@ -159,7 +163,7 @@ class MacroAverage(Metric):
     A classification metric that returns the macro-average of the model,
     based on the predictions and on the ground truth.
     """
-    def __call__(self, ground_truth: np.array, predictions: np.array) -> float:
+    def __call__(self, predictions: np.array, ground_truth: np.array) -> float:
         """
         The customised __call__ method for this metric, based on the blueprint
         in Metric class.
@@ -182,7 +186,7 @@ class R2Score(Metric):
     A regression metric that returns the R squared statistic of the model,
     based on the predictions and on the ground truth.
     """
-    def __call__(self, ground_truth: np.array, predictions: np.array) -> float:
+    def __call__(self, predictions: np.array, ground_truth: np.array) -> float:
         """
         The customised __call__ method for this metric, based on the blueprint
         in Metric class.

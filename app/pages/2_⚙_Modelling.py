@@ -5,7 +5,8 @@ from autoop.core.ml.dataset import Dataset
 from autoop.functional.feature import detect_feature_types
 from autoop.core.ml.model import get_model, REGRESSION_MODELS
 from autoop.core.ml.model import CLASSIFICATION_MODELS
-from autoop.core.ml.metric import get_metric, METRICS
+from autoop.core.ml.metric import get_metric, REGRESSION_METRICS
+from autoop.core.ml.metric import CLASSIFICATION_METRICS
 from autoop.core.ml.pipeline import Pipeline
 
 
@@ -53,9 +54,7 @@ if x:
             rest_of_features.append(element.name)
 
     target_feature = st.radio("Pick the targeted feature:", rest_of_features)
-    # for feature in c:
-    #     if feature.name in selected_features:
-    #         st.write(str(feature))
+
     for feature in c:
         if feature.name == target_feature:
             target_feature = feature
@@ -63,18 +62,19 @@ if x:
 
     if target_feature.type == "categorical":
         selected_model = st.radio("Pick one model:", CLASSIFICATION_MODELS)
+        metric_type = CLASSIFICATION_METRICS
     elif target_feature.type == "numerical":
         selected_model = st.radio("Pick one model:", REGRESSION_MODELS)
+        metric_type = REGRESSION_METRICS
 
     input_features = [feature for feature in c
                       if feature.name in selected_features]
 
     model = get_model(selected_model)
-
     selected_metric = st.selectbox("Choose a metric for model evaluation:",
-                                   METRICS)
-    metric = get_metric(selected_metric)
+                                   metric_type)
 
+    metric = get_metric(selected_metric)
     st.subheader("Split Dataset")
     split_ratio = st.slider(
         "Training set ratio (remaining goes to validation):",
@@ -87,7 +87,8 @@ if x:
     st.write(f"**Target Feature**: {target_feature.name}")
     st.write(f"**Metric**: {selected_metric}")
     st.write(
-        f"**Training Split**: {split_ratio * 100:.0f}% Training, {100 - split_ratio * 100:.0f}% Validation")
+        f"**Training Split**: {split_ratio * 100:.0f}% Training," +
+        f"{100 - split_ratio * 100:.0f}% Validation")
 
     if st.button("Train Model"):
         pipeline = Pipeline(
