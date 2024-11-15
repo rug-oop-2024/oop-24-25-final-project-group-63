@@ -67,7 +67,7 @@ class LocalStorage(Storage):
         base_path (str): The root directory for storing files.
     """
 
-    def __init__(self, base_path: str = "./assets"):
+    def __init__(self, base_path: str = "./assets") -> None:
         """
         Initializes the LocalStorage class.
 

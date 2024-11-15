@@ -29,7 +29,7 @@ class Artifact(BaseModel):
         metadata: Optional[Dict[str, str]] = None,
         type: str = "",
         tags: Optional[List[str]] = None,
-    ):
+    ) -> None:
         """
         The constructor of the artifact class. Almost all the parameters
         are mandatory for the initialization of an instance, but not

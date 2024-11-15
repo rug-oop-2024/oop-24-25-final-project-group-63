@@ -10,7 +10,7 @@ class Database():
     """
     A class that represents the database features.
     """
-    def __init__(self, storage: Storage):
+    def __init__(self, storage: Storage) -> None:
         self._storage = storage
         self._data = {}
         self._load()

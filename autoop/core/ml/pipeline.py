@@ -35,7 +35,7 @@ class Pipeline:
         input_features: List[Feature],
         target_feature: Feature,
         split=0.8,
-    ):
+    ) -> None:
         """
         Initializes the Pipeline class.
 
@@ -55,7 +55,7 @@ class Pipeline:
         self._artifacts = {}
         self._split = split
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         Provides a string representation of the pipeline.
 
@@ -73,7 +73,7 @@ Pipeline(
 """
 
     @property
-    def model(self):
+    def model(self) -> Model:
         """
         Returns the model used in the pipeline.
 
@@ -120,7 +120,7 @@ Pipeline(
         """
         self._artifacts[name] = artifact
 
-    def _preprocess_features(self):
+    def _preprocess_features(self) -> None:
         """
         Preprocesses input and target features from the dataset.
 
@@ -138,7 +138,7 @@ Pipeline(
         self._output_vector = target_data
         self._input_vectors = [data for _, data, _ in input_results]
 
-    def _split_data(self):
+    def _split_data(self) -> None:
         """
         Splits the dataset into training and testing sets based on
         the split ratio.
@@ -161,7 +161,7 @@ Pipeline(
         """
         return np.concatenate(vectors, axis=1)
 
-    def _train(self):
+    def _train(self) -> None:
         """
         Trains the model using the training data.
         """
@@ -169,7 +169,7 @@ Pipeline(
         Y = self._train_y
         self._model.fit(X, Y)
 
-    def _evaluate(self):
+    def _evaluate(self) -> None:
         """
         Evaluates the model on the test set using specified metrics.
         """
@@ -182,7 +182,7 @@ Pipeline(
             self._metrics_results.append((metric, result))
         self._predictions = predictions
 
-    def execute(self):
+    def execute(self) -> dict:
         """
         Executes the pipeline by preprocessing data, splitting it, training
         the model, and evaluating its performance.
