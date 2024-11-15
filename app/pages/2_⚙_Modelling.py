@@ -1,4 +1,5 @@
 import streamlit as st
+import pickle
 
 from app.core.system import AutoMLSystem
 from autoop.core.ml.dataset import Dataset
@@ -8,6 +9,7 @@ from autoop.core.ml.model import CLASSIFICATION_MODELS
 from autoop.core.ml.metric import get_metric, REGRESSION_METRICS
 from autoop.core.ml.metric import CLASSIFICATION_METRICS
 from autoop.core.ml.pipeline import Pipeline
+from autoop.core.ml.artifact import Artifact
 
 
 st.set_page_config(page_title="Modelling", page_icon="📈")
@@ -29,8 +31,8 @@ write_helper_text("Please choose the dataset you want to use" +
                   " for your modellling.")
 
 list_of_artifacts = automl.registry.list()
-
-x = st.selectbox("Datasets:", [element.name for element in list_of_artifacts])
+datasets = automl.registry.list(type="dataset")
+x = st.selectbox("Datasets:", [dataset.name for dataset in datasets])
 for element in list_of_artifacts:
     if element.name == x:
         x = element
@@ -91,21 +93,52 @@ if x:
         f"{100 - split_ratio * 100:.0f}% Validation")
 
     if st.button("Train Model"):
-        pipeline = Pipeline(
-            metrics=[metric],
-            dataset=dataset,
-            model=model,
-            input_features=input_features,
-            target_feature=target_feature,
-            split=split_ratio
-        )
+        if input_features:
+            pipeline = Pipeline(
+                metrics=[metric],
+                dataset=dataset,
+                model=model,
+                input_features=input_features,
+                target_feature=target_feature,
+                split=split_ratio
+            )
 
-        result = pipeline.execute()
+            result = pipeline.execute()
 
-        st.subheader("Model Evaluation Results")
+            st.subheader("Model Evaluation Results")
 
-        st.write(result)
+            st.write(result)
 
-        st.write(pipeline._test_y)
+            st.write(pipeline._test_y)
 
-        st.success("Training and evaluation complete!")
+            st.success("Training and evaluation complete!")
+        else:
+            st.error("Please select at least one input feature.")
+
+    st.write("## Save Pipeline")
+    pipeline_name = st.text_input("Pipeline Name", "Pipeline1")
+    pipeline_version = st.text_input("Pipeline Version", "1.0")
+
+    if st.button("Save Pipeline"):
+        if pipeline_name and pipeline_version and input_features:
+            pipeline_data = {
+                "input_features": input_features,
+                "target_feature": target_feature,
+                "split": split_ratio,
+                "model": selected_model,
+                "metrics": [metric]
+            }
+            serialized_pipeline = pickle.dumps(pipeline_data)
+            asset_path = f"./pipelines/{pipeline_name}_{pipeline_version}.pkl"
+
+            artifact = Artifact(
+                name=pipeline_name,
+                version=pipeline_version,
+                data=serialized_pipeline,
+                asset_path=asset_path,
+                type="pipeline"
+            )
+            automl.registry.register(artifact)
+            st.success(f"Pipeline '{pipeline_name}' version '{pipeline_version}' saved successfully!")
+        else:
+            st.error("Please provide both a name, version, and input for the pipeline.")
