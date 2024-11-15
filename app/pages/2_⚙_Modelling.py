@@ -106,10 +106,11 @@ if x:
             result = pipeline.execute()
 
             st.subheader("Model Evaluation Results")
+            left_column, right_column = st.columns(2)
 
-            st.write(result)
+            left_column.table(result["predictions"])
 
-            st.write(pipeline._test_y)
+            right_column.table(pipeline._test_y)
 
             st.success("Training and evaluation complete!")
         else:
