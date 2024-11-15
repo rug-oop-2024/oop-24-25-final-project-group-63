@@ -106,11 +106,19 @@ if dataset:
             result = pipeline.execute()
 
             st.subheader("Model Evaluation Results")
+
             left_column, right_column = st.columns(2)
+
+            left_column.write("Prediction values:")
+
+            right_column.write("Ground truth values:")
 
             left_column.table(result["predictions"])
 
             right_column.table(pipeline._test_y)
+
+            for metric, value in result["metrics"]:
+                st.markdown(f"- **{metric.__class__.__name__}**: {value:.4f}")
 
             st.success("Training and evaluation complete!")
         else:
