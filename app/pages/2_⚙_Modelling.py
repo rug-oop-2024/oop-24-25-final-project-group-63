@@ -139,6 +139,8 @@ if x:
                 type="pipeline"
             )
             automl.registry.register(artifact)
-            st.success(f"Pipeline '{pipeline_name}' version '{pipeline_version}' saved successfully!")
+            st.success(f"Pipeline '{pipeline_name}' version" +
+                       f" '{pipeline_version}' saved successfully!")
         else:
-            st.error("Provide both a name, version and input for the pipeline")
+            st.error("Please provide both a name, version, and input for" +
+                     " the pipeline.")
