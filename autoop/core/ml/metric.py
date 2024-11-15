@@ -5,7 +5,7 @@ import numpy as np
 
 CLASSIFICATION_METRICS = [
     "accuracy",
-    "cohens_kappa",
+    "recall",
     "macro_average",
 ]
 
@@ -31,8 +31,8 @@ def get_metric(name: str) -> Callable:
             return MeanAbsoluteError()
         case "accuracy":
             return Accuracy()
-        case "cohens_kappa":
-            return CohensKappa()
+        case "recall":
+            return Recall()
         case "macro_average":
             return MacroAverage()
         case "R_squared":
@@ -126,41 +126,28 @@ class MeanAbsoluteError(Metric):
         return np.mean(np.abs(ground_truth - predictions))
 
 
-class CohensKappa(Metric):
+class Recall(Metric):
     """
-    A classification metric that returns the Cohen's Kappa value of the model,
-    based on the predictions and on the ground truth.
+    A classification metric that returns the proportion of the correct
+    predictions based on the ground truth.
     """
+
     def __call__(self, predictions: np.array, ground_truth: np.array) -> float:
         """
         The customised __call__ method for this metric, based on the blueprint
         in Metric class.
         """
-        predictions = predictions.flatten()
-        ground_truth = ground_truth.flatten()
-
         if len(predictions) != len(ground_truth):
-            raise ValueError("Predictions and ground truth must" +
-                             " have the same length.")
+            raise ValueError("Predictions and ground truth must have the" +
+                             " same length.")
 
-        classes = np.unique(np.concatenate([predictions, ground_truth]))
-        num_classes = len(classes)
+        true_positive = np.sum((predictions == 1) & (ground_truth == 1))
+        false_negative = np.sum((predictions == 0) & (ground_truth == 1))
 
-        confusion_matrix = np.zeros((num_classes, num_classes), dtype=int)
-        for i in range(len(ground_truth)):
-            true_idx = np.where(classes == ground_truth[i])[0][0]
-            pred_idx = np.where(classes == predictions[i])[0][0]
-            confusion_matrix[true_idx, pred_idx] += 1
-
-        p_o = np.trace(confusion_matrix) / np.sum(confusion_matrix)
-
-        row_sums = np.sum(confusion_matrix, axis=1)
-        col_sums = np.sum(confusion_matrix, axis=0)
-        total = np.sum(confusion_matrix)
-        p_e = np.sum((row_sums * col_sums) / total**2)
-
-        kappa = (p_o - p_e) / (1 - p_e) if (1 - p_e) != 0 else 1.0
-        return kappa
+        if true_positive + false_negative > 0:
+            return true_positive / (true_positive + false_negative)
+        else:
+            return 0.0
 
 
 class MacroAverage(Metric):
