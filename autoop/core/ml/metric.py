@@ -162,15 +162,19 @@ class MacroAverage(Metric):
         """
         classes = np.unique(ground_truth)
         precision_per_class = []
+
         for element in classes:
             true_positive = np.sum((ground_truth == element) and
                                    (predictions == element))
             predicted_positive = np.sum(predictions == element)
+
             if predicted_positive != 0:
                 precision = true_positive / predicted_positive
             else:
                 precision = 0.0
+
             precision_per_class.append(precision)
+
         return np.mean(precision_per_class)
 
 
