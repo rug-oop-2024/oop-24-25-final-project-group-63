@@ -41,7 +41,7 @@ else:
             st.rerun()
 
         st.write("## Predict with Pipeline")
-        uploaded_file = st.file_uploader("Upload a CSV file for prediction",
+        uploaded_file = st.file_uploader("Upload a CSV file for prediction.",
                                          type=["csv"])
 
         if uploaded_file:
