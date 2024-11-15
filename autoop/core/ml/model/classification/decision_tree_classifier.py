@@ -1,9 +1,9 @@
-from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
 from autoop.core.ml.model import Model
 import numpy as np
 
 
-class LogisticRegressionModel(Model):
+class DecisionTreeModel(Model):
     """
     This class wraps the logistic regression model from sklearn.
     It inherits from Model class.
@@ -17,7 +17,7 @@ class LogisticRegressionModel(Model):
         parameters the observations and the ground truth of a dataset and
         trains based on them.
         """
-        model = LogisticRegression(solver='liblinear', random_state=0)
+        model = DecisionTreeClassifier()
         model.fit(observations, ground_truth)
         self._parameters["model"] = model
 

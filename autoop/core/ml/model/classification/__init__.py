@@ -1,9 +1,9 @@
 from ..classification.k_nearest_neighbors import KNearestNeighbors
-from ..classification.logistic_regression import LogisticRegressionModel
-from ..classification.random_forest_classifier import RandomForestClassifierModel
+from ..classification.decision_tree_classifier import DecisionTreeModel
+from ..classification.random_forest_class import RandomForestClassifierModel
 
 CLASSIFICATION_MODELS = {
     "k nearest neighbors": KNearestNeighbors(),
-    "logistic regression": LogisticRegressionModel(),
+    "decision tree classifier": DecisionTreeModel(),
     "random forest classifier": RandomForestClassifierModel()
 }

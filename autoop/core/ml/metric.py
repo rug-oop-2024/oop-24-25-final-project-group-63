@@ -136,7 +136,8 @@ class CohensKappa(Metric):
         ground_truth = ground_truth.flatten()
 
         if len(predictions) != len(ground_truth):
-            raise ValueError("Predictions and ground truth must have the same length.")
+            raise ValueError("Predictions and ground truth must" +
+                             " have the same length.")
 
         classes = np.unique(np.concatenate([predictions, ground_truth]))
         num_classes = len(classes)
