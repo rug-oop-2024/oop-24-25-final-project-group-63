@@ -5,7 +5,7 @@ import numpy as np
 
 class DecisionTreeModel(Model):
     """
-    This class wraps the logistic regression model from sklearn.
+    This class wraps the decision tree model from sklearn.
     It inherits from Model class.
 
     args:

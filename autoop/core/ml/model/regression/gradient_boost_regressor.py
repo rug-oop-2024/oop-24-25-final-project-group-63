@@ -5,7 +5,7 @@ import numpy as np
 
 class GradientBoostModel(Model):
     """
-    A class in which a multiple linear regression model is implemented.
+    A class in which a gradient boost regression model is implemented.
     Different from the previous one, this model is using methods from
     a library. It inherits from "base_model.py".
 
@@ -15,7 +15,7 @@ class GradientBoostModel(Model):
 
     def fit(self, observations: np.array, ground_truth: np.array) -> None:
         """
-        A method that trains the data using "Lasso" class. We use the
+        A method that trains the data using "gradient boost" class. We use the
         predefined methods of that class to train the data and we add
         it in the private attribute "_parameters".
 
@@ -32,7 +32,7 @@ class GradientBoostModel(Model):
 
     def predict(self, observations: np.array) -> np.array:
         """
-        A method that predicts the multiple linear regression based on the
+        A method that predicts the gradient boost regression based on the
         attribute "observations". We just calculate the prediction using
         the intercept and slopes.
 

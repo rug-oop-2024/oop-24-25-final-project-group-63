@@ -82,15 +82,19 @@ class Accuracy(Metric):
         The customised __call__ method for this metric, based on the blueprint
         in Metric class.
         """
-        # correct = 0
-        # for element1, element2 in zip(ground_truth, predictions):
-        #     ok = 1
-        #     for element3, element4 in zip(element1, element2):
-        #         if element3 != element4 and ok == 1:
-        #             ok = 0
-        #     if ok == 1:
-        #         correct += 1
-        correct = np.sum(ground_truth == predictions)
+        correct = 0
+        for gt_element, pred_element in zip(ground_truth, predictions):
+            try:
+                found = True
+                for gt_value, pred_value in zip(gt_element, pred_element):
+                    if gt_value != pred_value and found:
+                        found = False
+                        continue
+                if found:
+                    correct += 1
+            except Exception:
+                if gt_element == pred_element:
+                    correct += 1
         return correct / len(ground_truth)
 
 
@@ -171,9 +175,10 @@ class MacroAverage(Metric):
         """
         classes = np.unique(ground_truth)
         precision_per_class = []
-        for c in classes:
-            true_positive = np.sum((ground_truth == c) & (predictions == c))
-            predicted_positive = np.sum(predictions == c)
+        for element in classes:
+            true_positive = np.sum((ground_truth == element) and
+                                   (predictions == element))
+            predicted_positive = np.sum(predictions == element)
             if predicted_positive != 0:
                 precision = true_positive / predicted_positive
             else:

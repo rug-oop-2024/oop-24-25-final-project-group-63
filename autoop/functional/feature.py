@@ -5,7 +5,12 @@ from autoop.core.ml.feature import Feature
 
 
 def detect_feature_types(dataset: Dataset) -> List[Feature]:
-    """Assumption: only categorical and numerical features and no NaN values.
+    """
+    Assumption: only categorical and numerical features and no NaN values.
+    "threshold" value is used when the data tries to be transformed into
+    numerical. However, there can also be categorical data that uses
+    numbers, so it checks whether there are more than 5 types. If there
+    are five different numbers, the data is considered numerical.
     Args:
         dataset: Dataset
     Returns:
